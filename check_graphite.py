@@ -271,13 +271,14 @@ if __name__ == '__main__':
         print 'CRITICAL: No output from Graphite for target(s): %s' % ', '.join(targets)
         sys.exit(NAGIOS_STATUSES['CRITICAL'])
 
+    exit_code = NAGIOS_STATUSES['OK']
     for target, messages in check_output.iteritems():
         if messages['CRITICAL']:
-            exit_code = NAGIOS_STATUSES['CRITICAL']
+            exit_code = max(NAGIOS_STATUSES['CRITICAL'], exit_code)
         elif messages['WARNING']:
-            exit_code = NAGIOS_STATUSES['WARNING']
+            exit_code = max(NAGIOS_STATUSES['WARNING'], exit_code)
         else:
-            exit_code = NAGIOS_STATUSES['OK']
+            exit_code = max(NAGIOS_STATUSES['OK'], exit_code)
 
         for status_code in ['CRITICAL', 'WARNING', 'OK']:
             if messages[status_code]:
